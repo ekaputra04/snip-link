@@ -4,17 +4,20 @@ CREATE TABLE "Link" (
     "title" TEXT NOT NULL,
     "originalUrl" TEXT NOT NULL,
     "shortUrl" TEXT NOT NULL,
+    "is_public" BOOLEAN NOT NULL DEFAULT true,
+    "tags" TEXT[],
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "authorId" INTEGER,
+    "authorId" TEXT,
 
     CONSTRAINT "Link_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
     "name" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")

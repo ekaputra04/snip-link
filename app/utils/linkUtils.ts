@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
  * @param userId - ID of the logged-in user.
  * @returns Promise<Link[]> - List of links.
  */
-export const getLinksByUser = async (userId: number): Promise<Link[]> => {
+export const getLinksByUser = async (userId: string): Promise<Link[]> => {
   try {
     return await prisma.link.findMany({
       where: { authorId: userId },
@@ -26,8 +26,13 @@ export const getLinksByUser = async (userId: number): Promise<Link[]> => {
  * @returns Promise<Link> - Created link.
  */
 export const createLink = async (
-  userId: number,
-  linkData: { title: string; originalUrl: string; shortUrl: string }
+  userId: string,
+  linkData: {
+    title: string;
+    originalUrl: string;
+    shortUrl: string;
+    tags?: string[];
+  }
 ): Promise<Link> => {
   try {
     return await prisma.link.create({
@@ -51,7 +56,7 @@ export const createLink = async (
  */
 
 export const updateLink = async (
-  userId: number,
+  userId: string,
   linkId: number,
   updateData: Partial<{
     title: string;
@@ -113,7 +118,7 @@ export const updateLink = async (
  * @returns Promise<Link> - Deleted link.
  */
 export const deleteLink = async (
-  userId: number,
+  userId: string,
   linkId: number
 ): Promise<Link> => {
   try {

@@ -23,12 +23,13 @@ model Link {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   author      User?    @relation(fields: [authorId], references: [id])
-  authorId    Int?
+  authorId    String?
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  links Link[]
+  id       String  @id
+  email    String  @unique
+  password String
+  name     String?
+  links    Link[]
 }

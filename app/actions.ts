@@ -4,38 +4,72 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { PrismaClient } from "@prisma/client";
+import { createHash, randomBytes } from "crypto";
+
+const prisma = new PrismaClient();
 
 export const signUpAction = async (formData: FormData) => {
-  const email = formData.get("email")?.toString();
-  const password = formData.get("password")?.toString();
-  const supabase = await createClient();
-  const origin = (await headers()).get("origin");
+  try {
+    const email = formData.get("email")?.toString();
+    const password = formData.get("password")?.toString();
+    const supabase = createClient();
+    const origin = (await headers()).get("origin");
 
-  if (!email || !password) {
-    return encodedRedirect(
-      "error",
-      "/sign-up",
-      "Email and password are required"
-    );
-  }
+    if (!email || !password) {
+      return encodedRedirect(
+        "error",
+        "/sign-up",
+        "Email and password are required"
+      );
+    }
 
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: `${origin}/auth/callback`,
-    },
-  });
+    const { error, data } = await (
+      await supabase
+    ).auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${origin}/auth/callback`,
+      },
+    });
 
-  if (error) {
-    console.error(error.code + " " + error.message);
-    return encodedRedirect("error", "/sign-up", error.message);
-  } else {
+    if (error) {
+      console.error(error.code + " " + error.message);
+      return encodedRedirect("error", "/sign-up", error.message);
+    }
+
+    if (!data || !data.user) {
+      console.error("User data is missing in the response from Supabase");
+      return encodedRedirect("error", "/sign-up", "User creation failed");
+    }
+
+    const salt = randomBytes(16).toString("hex");
+
+    const hash = createHash("sha256");
+    hash.update(password + salt);
+    const hashedPassword = hash.digest("hex");
+
+    const userCreated = await prisma.user.create({
+      data: {
+        id: data.user.id,
+        email: email,
+        password: hashedPassword,
+      },
+    });
+
     return encodedRedirect(
       "success",
-      "/sign-up",
+      "/sign-in",
       "Thanks for signing up! Please check your email for a verification link."
     );
+  } catch (error) {
+    if ((error as any)?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
+
+    console.error("Error in sign up process:", error);
+    return encodedRedirect("error", "/sign-up", "Failed to save user data");
   }
 };
 
