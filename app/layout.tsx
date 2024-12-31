@@ -1,6 +1,7 @@
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -8,7 +9,7 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
+  title: "Snip Link",
   description: "The fastest way to build apps with Next.js and Supabase",
 };
 
@@ -34,6 +35,7 @@ export default function RootLayout({
           <main>
             <div className="px-8 md:px-16 lg:px-64">{children}</div>
           </main>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

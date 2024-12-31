@@ -26,6 +26,12 @@ export const updateSession = async (request: NextRequest) => {
       error,
     } = await supabase.auth.getUser();
 
+    if (user) {
+      console.log("USER MIDDLE: " + JSON.stringify(user));
+
+      response.headers.set("x-user-id", user.id);
+    }
+
     const pathname = request.nextUrl.pathname;
 
     if (user) {

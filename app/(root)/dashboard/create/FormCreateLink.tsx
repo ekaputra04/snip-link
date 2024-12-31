@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { createLink } from "@/app/utils/linkUtils";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   title: z
@@ -57,10 +58,11 @@ export default function FormCreateLink({ userId }: { userId: string }) {
       };
 
       await createLink(userId, linkData);
-      alert("Link created successfully!");
+      toast.success("Link created successfully!");
       form.reset();
     } catch (error) {
       console.error("Error creating link:", error);
+      toast.success("Error creating link!");
       setErrorMessage("Failed to create link. Please try again.");
     } finally {
       setIsSubmitting(false);
