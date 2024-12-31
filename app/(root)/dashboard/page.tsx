@@ -1,9 +1,8 @@
-import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import FormCreateLink from "./FormCreateLink";
+import { createClient } from "@/utils/supabase/server";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
   return (
     <>
       <div className="flex justify-between items-center pt-8 w-full">

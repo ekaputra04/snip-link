@@ -1,3 +1,5 @@
+"use server";
+
 import { PrismaClient, Link } from "@prisma/client";
 
 const prisma = new PrismaClient();

@@ -4,6 +4,15 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { CircleUser } from "lucide-react";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -15,7 +24,7 @@ export default async function AuthButton() {
   if (!hasEnvVars) {
     return (
       <>
-        <div className="flex gap-4 items-center">
+        <div className="flex items-center gap-4">
           <div>
             <Badge
               variant={"default"}
@@ -50,12 +59,27 @@ export default async function AuthButton() {
   }
   return user ? (
     <div className="flex items-center gap-4">
-      Hey, {user.email}!
-      <form action={signOutAction}>
-        <Button type="submit" variant={"outline"}>
-          Sign out
-        </Button>
-      </form>
+      <p>Hey, {user.email}!</p>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <CircleUser />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <Link href="/dashboard" className="hover:cursor-pointer">
+            <DropdownMenuItem>Dashboard</DropdownMenuItem>
+          </Link>
+          <DropdownMenuItem>
+            <form action={signOutAction}>
+              <Button type="submit" variant={"default"}>
+                Sign out
+              </Button>
+            </form>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   ) : (
     <div className="flex gap-2">

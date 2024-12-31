@@ -1,7 +1,13 @@
-import Navbar from "@/components/Navbar";
-import FormCreateLink from "../FormCreateLink";
+import { createClient } from "@/utils/supabase/server";
+import FormCreateLink from "./FormCreateLink";
 
-export default function CreatePage() {
+export default async function CreatePage() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <>
       <div className="space-y-4 py-4">
@@ -11,7 +17,7 @@ export default function CreatePage() {
       </div>
 
       <div className="p-8 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-3xl">
-        <FormCreateLink />
+        {user && <FormCreateLink userId={user.id} />}
       </div>
     </>
   );

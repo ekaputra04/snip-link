@@ -27,14 +27,13 @@ const formSchema = z.object({
   tags: z
     .string()
     .optional()
-    .transform((value) => (value ? value.split(" ") : [])), // Transform tags input into an array of strings
+    .transform((value) => (value ? value.split(" ") : [])),
 });
 
-export default function FormCreateLink() {
+export default function FormCreateLink({ userId }: { userId: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,13 +44,11 @@ export default function FormCreateLink() {
     },
   });
 
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     setErrorMessage(null);
 
     try {
-      const userId = 1; // Replace with the actual user ID from context/auth
       const linkData = {
         title: values.title,
         originalUrl: values.originalUrl,
@@ -61,7 +58,7 @@ export default function FormCreateLink() {
 
       await createLink(userId, linkData);
       alert("Link created successfully!");
-      form.reset(); // Reset the form after successful submission
+      form.reset();
     } catch (error) {
       console.error("Error creating link:", error);
       setErrorMessage("Failed to create link. Please try again.");
@@ -123,7 +120,7 @@ export default function FormCreateLink() {
                 <Input placeholder="Input tags here..." {...field} />
               </FormControl>
               <FormDescription>
-                Separate tags with spaces (e.g., "tag1 tag2 tag3").
+                Separate tags with comma (e.g., "tag1 tag2 tag3").
               </FormDescription>
               <FormMessage />
             </FormItem>
