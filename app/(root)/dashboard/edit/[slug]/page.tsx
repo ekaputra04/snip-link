@@ -1,5 +1,7 @@
+import { getLinksBySlug } from "@/app/utils/linkUtils";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import FormEditLink from "./FormEditLink";
 
 export default async function EditPage({
   params,
@@ -7,6 +9,11 @@ export default async function EditPage({
   params: Promise<{ slug: string }>;
 }) {
   const slug = (await params).slug;
+  const link = await getLinksBySlug(slug);
+
+  if (link && !link.authorId) {
+    throw new Error("Author ID is missing.");
+  }
 
   return (
     <>
@@ -17,8 +24,13 @@ export default async function EditPage({
         <ChevronRight />
         <h1 className="font-bold text-2xl">Edit Link</h1>
       </div>
-      <p>{slug}</p>
-      <h1>Edit Page</h1>
+      {link ? (
+        <FormEditLink link={{ ...link, authorId: link.authorId || "" }} />
+      ) : (
+        <>
+          <p>Link not found</p>
+        </>
+      )}
     </>
   );
 }

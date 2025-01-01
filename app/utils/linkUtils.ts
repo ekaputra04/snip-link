@@ -21,6 +21,17 @@ export const getLinksByUser = async (userId: string): Promise<Link[]> => {
   }
 };
 
+export const getLinksBySlug = async (slug: string): Promise<Link | null> => {
+  try {
+    return await prisma.link.findFirst({
+      where: { slug: slug },
+    });
+  } catch (error) {
+    console.error("Error fetching link:", error);
+    throw new Error("Unable to fetch link");
+  }
+};
+
 /**
  * Create a new link for the logged-in user.
  * @param userId - ID of the logged-in user.
@@ -66,8 +77,6 @@ export const updateLink = async (
     shortUrl: string;
     is_public: boolean;
     tags: string[];
-    addTags: string[];
-    removeTags: string[];
   }>
 ): Promise<Link> => {
   try {
@@ -79,7 +88,7 @@ export const updateLink = async (
       throw new Error("Link not found or unauthorized");
     }
 
-    const updatePayload: any = {
+    const updatePayload: Partial<Link> = {
       title: updateData.title,
       originalUrl: updateData.originalUrl,
       shortUrl: updateData.shortUrl,
@@ -88,19 +97,6 @@ export const updateLink = async (
 
     if (updateData.tags) {
       updatePayload.tags = updateData.tags;
-    }
-
-    if (updateData.addTags) {
-      updatePayload.tags = {
-        push: updateData.addTags,
-      };
-    }
-
-    if (updateData.removeTags) {
-      const currentTags = link.tags || [];
-      updatePayload.tags = currentTags.filter(
-        (tag) => !updateData.removeTags!.includes(tag)
-      );
     }
 
     return await prisma.link.update({
