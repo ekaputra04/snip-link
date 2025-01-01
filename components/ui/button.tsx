@@ -18,12 +18,14 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        comic:
+          "will-change-transform relative flex gap-2 px-4 py-2 border-t-2 border-r-8 hover:border-r-2 border-b-8 border-black hover:border-b-2 border-l-2 rounded-3xl hover:translate-x-1 hover:translate-y-1",
       },
       size: {
-        default: "h-8 px-2 py-1",
-        sm: "h-7 rounded-md px-2",
-        lg: "h-9 rounded-md px-6",
-        icon: "h-8 w-8",
+        default: "px-4 py-2",
+        sm: "rounded-md px-2 py-1",
+        lg: "rounded-md px-6 py-2",
+        icon: "w-8",
       },
     },
     defaultVariants: {

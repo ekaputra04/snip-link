@@ -1,6 +1,6 @@
 import { getLinksByUser } from "@/app/utils/linkUtils";
-import DashboardView from "./DashboardView";
 import { headers } from "next/headers";
+import DashboardView from "./DashboardView";
 
 export default async function DashboardPage() {
   const headersList = headers();
@@ -10,13 +10,12 @@ export default async function DashboardPage() {
     return <p>Unauthorized</p>;
   }
 
+  // Ambil data links dari server
   const links = await getLinksByUser(userId);
 
   return (
-    <div>
-      <h1>Welcome, User {userId}</h1>
-      <p>{JSON.stringify(links, null, 2)}</p>
-      <DashboardView />
-    </div>
+    <>
+      <DashboardView links={links} />
+    </>
   );
 }

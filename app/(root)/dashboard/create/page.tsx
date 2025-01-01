@@ -1,5 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import FormCreateLink from "./FormCreateLink";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
 export default async function CreatePage() {
   const supabase = await createClient();
@@ -10,10 +12,14 @@ export default async function CreatePage() {
 
   return (
     <>
-      <div className="space-y-4 py-4">
-        <h1 className="font-bold text-2xl">Create a link</h1>
+      <div className="flex justify-start items-center gap-2 py-8 pt-8 w-full">
+        <Link href="/dashboard" className="font-bold text-2xl hover:underline">
+          Dashboard
+        </Link>
 
-        <p>You can create 48 more links this month.</p>
+        <ChevronRight />
+
+        <h1 className="font-bold text-2xl">Create Link</h1>
       </div>
 
       <div className="p-8 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-3xl">

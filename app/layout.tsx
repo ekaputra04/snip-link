@@ -34,8 +34,8 @@ export default function RootLayout({
         >
           <main>
             <div className="px-8 md:px-16 lg:px-64">{children}</div>
+            <Toaster />
           </main>
-          <Toaster />
         </ThemeProvider>
       </body>
     </html>

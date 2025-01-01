@@ -1,8 +1,10 @@
 import { signUpAction } from "@/app/actions";
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default async function Signup(props: {
@@ -19,8 +21,13 @@ export default async function Signup(props: {
 
   return (
     <>
+      <Link href={"/"} className="top-4 left-4 absolute">
+        <Button variant={"comic"} className="py-2">
+          <ArrowLeft /> <span>Back</span>
+        </Button>
+      </Link>
       <div className="flex justify-center items-center bg-background w-full h-[100vh]">
-        <div className="flex">
+        <div className="flex p-4 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-3xl">
           <form className="flex flex-col mx-auto min-w-64 max-w-64">
             <h1 className="font-medium text-2xl">Sign up</h1>
             <p className="text-foreground text-sm text">
@@ -33,6 +40,8 @@ export default async function Signup(props: {
               </Link>
             </p>
             <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
+              <Label htmlFor="name">Name</Label>
+              <Input name="name" placeholder="John Doe" required />
               <Label htmlFor="email">Email</Label>
               <Input name="email" placeholder="you@example.com" required />
               <Label htmlFor="password">Password</Label>

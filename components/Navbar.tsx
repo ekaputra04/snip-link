@@ -7,7 +7,7 @@ import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 export default function Navbar() {
   return (
     <>
-      <nav className="flex justify-center border-b border-b-foreground/10 w-full h-16">
+      <nav className="flex justify-center border-b-2 border-black w-full h-16">
         <div className="flex justify-between items-center py-3 w-full text-sm">
           <div className="flex items-center gap-5 font-semibold">
             <Link href={"/"}>Snip Link</Link>

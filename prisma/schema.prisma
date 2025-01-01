@@ -15,9 +15,10 @@ datasource db {
 
 model Link {
   id          Int      @id @default(autoincrement())
+  slug        String   @default(uuid())
   title       String
   originalUrl String
-  shortUrl    String
+  shortUrl    String   @unique
   is_public   Boolean  @default(true)
   tags        String[]
   createdAt   DateTime @default(now())

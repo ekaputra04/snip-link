@@ -122,13 +122,13 @@ export default function FormCreateLink({ userId }: { userId: string }) {
                 <Input placeholder="Input tags here..." {...field} />
               </FormControl>
               <FormDescription>
-                Separate tags with comma (e.g., "tag1 tag2 tag3").
+                Separate tags with space (e.g., "tag1 tag2 tag3").
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" variant={"comic"} disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Submit"}
         </Button>
       </form>

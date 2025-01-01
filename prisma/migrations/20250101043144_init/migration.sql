@@ -1,6 +1,7 @@
 -- CreateTable
 CREATE TABLE "Link" (
     "id" SERIAL NOT NULL,
+    "slug" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "originalUrl" TEXT NOT NULL,
     "shortUrl" TEXT NOT NULL,
