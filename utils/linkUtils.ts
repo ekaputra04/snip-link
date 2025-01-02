@@ -1,6 +1,7 @@
 "use server";
 
 import { PrismaClient, Link } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -9,7 +10,7 @@ const prisma = new PrismaClient();
  * @param userId - ID of the logged-in user.
  * @returns Promise<Link[]> - List of links.
  */
-export const getLinksByUser = async (userId: string): Promise<Link[]> => {
+export const getLinksWithoutCache = async (userId: string): Promise<Link[]> => {
   try {
     return await prisma.link.findMany({
       where: { authorId: userId },
@@ -20,6 +21,17 @@ export const getLinksByUser = async (userId: string): Promise<Link[]> => {
     throw new Error("Unable to fetch links");
   }
 };
+
+export const getLinks = unstable_cache(
+  async (userId: string) => {
+    return await prisma.link.findMany({
+      where: { authorId: userId },
+      orderBy: { createdAt: "desc" },
+    });
+  },
+  ["links"],
+  { revalidate: 60, tags: ["links"] }
+);
 
 export const getLinksBySlug = async (slug: string): Promise<Link | null> => {
   try {
@@ -115,17 +127,14 @@ export const updateLink = async (
  * @param linkId - ID of the link to delete.
  * @returns Promise<Link> - Deleted link.
  */
-export const deleteLink = async (
-  userId: string,
-  linkId: number
-): Promise<Link> => {
+export const deleteLink = async (linkId: number): Promise<Link> => {
   try {
     const link = await prisma.link.findUnique({
       where: { id: linkId },
     });
 
-    if (!link || link.authorId !== userId) {
-      throw new Error("Link not found or unauthorized");
+    if (!link) {
+      throw new Error("Link not found");
     }
 
     return await prisma.link.delete({

@@ -2,13 +2,15 @@ import { createClient } from "@/utils/supabase/server";
 import FormCreateLink from "./FormCreateLink";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { headers } from "next/headers";
 
 export default async function CreatePage() {
-  const supabase = await createClient();
+  const headersList = headers();
+  const userId = (await headersList).get("x-user-id"); // Ambil header dari response middleware
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  if (!userId) {
+    return <p>Unauthorized</p>;
+  }
 
   return (
     <>
@@ -23,7 +25,7 @@ export default async function CreatePage() {
       </div>
 
       <div className="p-8 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-3xl">
-        {user && <FormCreateLink userId={user.id} />}
+        {userId && <FormCreateLink userId={userId} />}
       </div>
     </>
   );

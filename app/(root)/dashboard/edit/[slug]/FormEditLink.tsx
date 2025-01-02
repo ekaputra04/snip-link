@@ -14,9 +14,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
-import { updateLink } from "@/app/utils/linkUtils";
+import { updateLink } from "@/utils/linkUtils";
 import { toast } from "sonner";
+import { X } from "lucide-react";
+import { redirect, useRouter } from "next/navigation";
 
 const formSchema = z.object({
   title: z
@@ -25,10 +28,7 @@ const formSchema = z.object({
     .max(50, "Title must not exceed 50 characters"),
   originalUrl: z.string().url("Please enter a valid URL"),
   shortUrl: z.string().min(2, "Short URL must be at least 2 characters"),
-  tags: z
-    .string()
-    .optional()
-    .transform((value) => (value ? value.split(" ").filter(Boolean) : [])), // Memastikan array valid
+  tags: z.array(z.string()).optional(),
 });
 
 export default function FormEditLink({
@@ -43,8 +43,12 @@ export default function FormEditLink({
     tags: string[] | undefined;
   };
 }) {
+  const router = useRouter();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [tags, setTags] = useState<string[]>(link.tags || []);
+  const [tagInput, setTagInput] = useState<string>("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,9 +56,21 @@ export default function FormEditLink({
       title: link.title,
       originalUrl: link.originalUrl,
       shortUrl: link.shortUrl,
-      tags: link.tags ? link.tags : [], // Ensure tags is an array of strings
+      tags: link.tags || [],
     },
   });
+
+  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === " " && tagInput.trim() !== "") {
+      e.preventDefault();
+      setTags((prevTags) => [...prevTags, tagInput.trim()]);
+      setTagInput("");
+    }
+  };
+
+  const handleRemoveTag = (index: number) => {
+    setTags((prevTags) => prevTags.filter((_, i) => i !== index));
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
@@ -65,12 +81,13 @@ export default function FormEditLink({
         title: values.title,
         originalUrl: values.originalUrl,
         shortUrl: values.shortUrl,
-        tags: values.tags,
+        tags,
       };
 
       await updateLink(link.authorId, link.id, updateData);
       toast.success("Link updated successfully!");
-      form.reset({ ...values }); // Reset dengan nilai terbaru
+      form.reset({ ...values, tags });
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error updating link:", error);
       toast.error("Failed to update link!");
@@ -123,22 +140,36 @@ export default function FormEditLink({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="tags"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tags (separated by space)</FormLabel>
-              <FormControl>
-                <Input placeholder="Input tags here..." {...field} />
-              </FormControl>
-              <FormDescription>
-                Separate tags with space (e.g., "tag1 tag2 tag3").
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <FormItem>
+          <FormLabel>Tags</FormLabel>
+          <FormControl>
+            <Input
+              placeholder="Input tags here and press space..."
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleAddTag}
+            />
+          </FormControl>
+          <FormDescription>
+            Separate tags with space (e.g., "tag1 tag2 tag3").
+          </FormDescription>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {tags.map((tag, index) => (
+              <Badge
+                key={index}
+                className="flex items-center space-x-2 bg-gray-200 px-2 py-1 rounded text-gray-800 hover:text-white"
+              >
+                <span>{tag}</span>
+                <X
+                  className="cursor-pointer"
+                  size={16}
+                  onClick={() => handleRemoveTag(index)}
+                />
+              </Badge>
+            ))}
+          </div>
+          <FormMessage />
+        </FormItem>
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Submit"}
         </Button>

@@ -15,8 +15,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { createLink } from "@/app/utils/linkUtils";
+import { createLink } from "@/utils/linkUtils";
 import { toast } from "sonner";
+import { X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
+import { useLinksStore } from "@/hooks/useLinksStore";
 
 const formSchema = z.object({
   title: z
@@ -25,15 +29,16 @@ const formSchema = z.object({
     .max(50, "Title must not exceed 50 characters"),
   originalUrl: z.string().url("Please enter a valid URL"),
   shortUrl: z.string().min(2, "Short URL must be at least 2 characters"),
-  tags: z
-    .string()
-    .optional()
-    .transform((value) => (value ? value.split(" ") : [])),
+  tags: z.array(z.string()).optional(),
 });
 
 export default function FormCreateLink({ userId }: { userId: string }) {
+  const router = useRouter();
+  const { addLink } = useLinksStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState<string>("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,9 +46,21 @@ export default function FormCreateLink({ userId }: { userId: string }) {
       title: "",
       originalUrl: "",
       shortUrl: "",
-      tags: undefined,
+      tags: [],
     },
   });
+
+  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === " " && tagInput.trim() !== "") {
+      e.preventDefault();
+      setTags((prevTags) => [...prevTags, tagInput.trim()]);
+      setTagInput("");
+    }
+  };
+
+  const handleRemoveTag = (index: number) => {
+    setTags((prevTags) => prevTags.filter((_, i) => i !== index));
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
@@ -54,15 +71,20 @@ export default function FormCreateLink({ userId }: { userId: string }) {
         title: values.title,
         originalUrl: values.originalUrl,
         shortUrl: values.shortUrl,
-        tags: values.tags,
+        tags: tags,
       };
 
-      await createLink(userId, linkData);
+      console.log("Creating link with data:", linkData);
+
+      const createdLink = await createLink(userId, linkData);
       toast.success("Link created successfully!");
+      addLink(createdLink);
       form.reset();
+      setTags([]);
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error creating link:", error);
-      toast.success("Error creating link!");
+
       setErrorMessage("Failed to create link. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -112,22 +134,36 @@ export default function FormCreateLink({ userId }: { userId: string }) {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="tags"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tags (separated by space)</FormLabel>
-              <FormControl>
-                <Input placeholder="Input tags here..." {...field} />
-              </FormControl>
-              <FormDescription>
-                Separate tags with space (e.g., "tag1 tag2 tag3").
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <FormItem>
+          <FormLabel>Tags</FormLabel>
+          <FormControl>
+            <Input
+              placeholder="Input tags here and press space..."
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleAddTag}
+            />
+          </FormControl>
+          <FormDescription>
+            Separate tags with space (e.g., "tag1 tag2 tag3").
+          </FormDescription>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {tags.map((tag, index) => (
+              <Badge
+                key={index}
+                className="flex items-center space-x-2 bg-gray-200 px-2 py-1 rounded text-gray-800 hover:text-white"
+              >
+                <span>{tag}</span>
+                <X
+                  className="cursor-pointer"
+                  size={16}
+                  onClick={() => handleRemoveTag(index)}
+                />
+              </Badge>
+            ))}
+          </div>
+          <FormMessage />
+        </FormItem>
         <Button type="submit" variant={"comic"} disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Submit"}
         </Button>

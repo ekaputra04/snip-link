@@ -1,21 +1,24 @@
-import { getLinksByUser } from "@/app/utils/linkUtils";
+import { getLinks } from "@/utils/linkUtils";
 import { headers } from "next/headers";
 import DashboardView from "./DashboardView";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
 
 export default async function DashboardPage() {
   const headersList = headers();
-  const userId = (await headersList).get("x-user-id"); // Ambil header dari response middleware
+  const userId = (await headersList).get("x-user-id");
 
   if (!userId) {
     return <p>Unauthorized</p>;
   }
 
-  // Ambil data links dari server
-  const links = await getLinksByUser(userId);
+  // const links = await getLinksByUser(userId);
+  const links = await getLinks(userId);
 
   return (
     <>
-      <DashboardView links={links} />
+      <DashboardView links={links} userId={userId} />
     </>
   );
 }
