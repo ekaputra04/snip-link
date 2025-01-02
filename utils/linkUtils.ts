@@ -1,7 +1,7 @@
 "use server";
 
 import { PrismaClient, Link } from "@prisma/client";
-import { unstable_cache } from "next/cache";
+import { revalidateTag, unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -30,13 +30,26 @@ export const getLinks = unstable_cache(
     });
   },
   ["links"],
-  { revalidate: 60, tags: ["links"] }
+  { revalidate: 3600, tags: ["links"] }
 );
 
 export const getLinksBySlug = async (slug: string): Promise<Link | null> => {
   try {
     return await prisma.link.findFirst({
       where: { slug: slug },
+    });
+  } catch (error) {
+    console.error("Error fetching link:", error);
+    throw new Error("Unable to fetch link");
+  }
+};
+
+export const getLinksByShortUrl = async (
+  shortUrl: string
+): Promise<Link | null> => {
+  try {
+    return await prisma.link.findFirst({
+      where: { shortUrl: shortUrl },
     });
   } catch (error) {
     console.error("Error fetching link:", error);
@@ -60,12 +73,16 @@ export const createLink = async (
   }
 ): Promise<Link> => {
   try {
-    return await prisma.link.create({
+    const link = await prisma.link.create({
       data: {
         ...linkData,
         authorId: userId,
       },
     });
+
+    revalidateTag("links");
+
+    return link;
   } catch (error) {
     console.error("Error creating link:", error);
     throw new Error("Unable to create link");
@@ -111,10 +128,14 @@ export const updateLink = async (
       updatePayload.tags = updateData.tags;
     }
 
-    return await prisma.link.update({
+    const linkData = await prisma.link.update({
       where: { id: linkId },
       data: updatePayload,
     });
+
+    revalidateTag("links");
+
+    return linkData;
   } catch (error) {
     console.error("Error updating link:", error);
     throw new Error("Unable to update link");
@@ -137,9 +158,13 @@ export const deleteLink = async (linkId: number): Promise<Link> => {
       throw new Error("Link not found");
     }
 
-    return await prisma.link.delete({
+    const linkData = await prisma.link.delete({
       where: { id: linkId },
     });
+
+    revalidateTag("links");
+
+    return linkData;
   } catch (error) {
     console.error("Error deleting link:", error);
     throw new Error("Unable to delete link");

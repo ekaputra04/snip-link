@@ -20,7 +20,6 @@ import { toast } from "sonner";
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
-import { useLinksStore } from "@/hooks/useLinksStore";
 
 const formSchema = z.object({
   title: z
@@ -34,7 +33,6 @@ const formSchema = z.object({
 
 export default function FormCreateLink({ userId }: { userId: string }) {
   const router = useRouter();
-  const { addLink } = useLinksStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>([]);
@@ -74,11 +72,8 @@ export default function FormCreateLink({ userId }: { userId: string }) {
         tags: tags,
       };
 
-      console.log("Creating link with data:", linkData);
-
       const createdLink = await createLink(userId, linkData);
       toast.success("Link created successfully!");
-      addLink(createdLink);
       form.reset();
       setTags([]);
       router.push("/dashboard");
@@ -164,7 +159,7 @@ export default function FormCreateLink({ userId }: { userId: string }) {
           </div>
           <FormMessage />
         </FormItem>
-        <Button type="submit" variant={"comic"} disabled={isSubmitting}>
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Submit"}
         </Button>
       </form>

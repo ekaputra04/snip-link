@@ -19,7 +19,7 @@ import { useState } from "react";
 import { updateLink } from "@/utils/linkUtils";
 import { toast } from "sonner";
 import { X } from "lucide-react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   title: z

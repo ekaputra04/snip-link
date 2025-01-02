@@ -25,7 +25,11 @@ export default async function EditPage({
         <h1 className="font-bold text-2xl">Edit Link</h1>
       </div>
       {link ? (
-        <FormEditLink link={{ ...link, authorId: link.authorId || "" }} />
+        <>
+          <div className="p-8 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-3xl">
+            <FormEditLink link={{ ...link, authorId: link.authorId || "" }} />
+          </div>
+        </>
       ) : (
         <>
           <p>Link not found</p>

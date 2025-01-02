@@ -25,9 +25,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LinkType } from "@/types/types";
-import { useLinksStore } from "@/hooks/useLinksStore";
 
 interface DashboardViewProps {
   links: LinkType[];
@@ -38,22 +37,12 @@ const url = process.env.NEXT_PUBLIC_URL;
 export default function DashboardView({ links, userId }: DashboardViewProps) {
   const [loading, setLoading] = useState(false);
 
-  const {
-    linksData,
-    setLinksData,
-    removeLink: deleteLinkFromStore,
-  } = useLinksStore();
-
-  useEffect(() => {
-    setLinksData(links);
-  }, [links, setLinksData]);
-
   const getLinksData = async () => {
     try {
       setLoading(true);
       const links = await getLinksWithoutCache(userId);
       console.log("Links fetched:", links);
-      setLinksData(links);
+
       setLoading(false);
     } catch (error) {
       console.error("Failed to fetch links : ", error);
@@ -74,7 +63,6 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
     try {
       const deletedLink = await deleteLink(id);
       toast.success("Link deleted successfully");
-      deleteLinkFromStore(deletedLink.id);
     } catch (error) {
       console.error("Failed to delete link:", error);
     }
@@ -101,8 +89,8 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
             </Link>
           </div>
           <div className="space-y-4">
-            {linksData.length > 0 ? (
-              linksData.map((link) => (
+            {links.length > 0 ? (
+              links.map((link) => (
                 <div
                   className="p-4 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-xl"
                   key={link.id}
