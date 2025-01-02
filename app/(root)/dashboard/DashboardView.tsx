@@ -25,9 +25,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LinkType } from "@/types/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface DashboardViewProps {
   links: LinkType[];
@@ -37,13 +45,18 @@ const url = process.env.NEXT_PUBLIC_URL;
 
 export default function DashboardView({ links, userId }: DashboardViewProps) {
   const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState("");
+  const [filteredLinks, setFilteredLinks] = useState<LinkType[]>(links);
+  const [accessibility, setAccessibility] = useState("all");
+  const [tagFilter, setTagFilter] = useState("all");
+
+  const uniqueTags = Array.from(new Set(links.flatMap((link) => link.tags)));
 
   const getLinksData = async () => {
     try {
       setLoading(true);
       const links = await getLinks(userId);
-      console.log("Links fetched:", links);
-
+      setFilteredLinks(links);
       setLoading(false);
     } catch (error) {
       console.error("Failed to fetch links : ", error);
@@ -69,9 +82,29 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
     }
   };
 
+  useEffect(() => {
+    setLoading(true);
+
+    const lowercasedQuery = query.toLowerCase();
+
+    const filtered = links.filter((link) => {
+      const matchesQuery = link.title.toLowerCase().includes(lowercasedQuery);
+      const matchesAccessibility =
+        accessibility === "all" ||
+        (accessibility === "true" && link.is_public) ||
+        (accessibility === "false" && !link.is_public);
+      const matchesTag = tagFilter === "all" || link.tags.includes(tagFilter);
+
+      return matchesQuery && matchesAccessibility && matchesTag;
+    });
+
+    setFilteredLinks(filtered);
+    setLoading(false);
+  }, [query, accessibility, tagFilter, links]);
+
   return (
     <>
-      <div className="flex justify-between items-center py-8 pt-8 w-full">
+      <div className="flex justify-between items-center pt-8 pb-4 w-full">
         <div className="flex items-center">
           <h1 className="font-bold text-2xl">Dashboard</h1>
           <Button
@@ -81,9 +114,55 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
             <RefreshCw className="w-4 h-4" />
           </Button>
         </div>
-        <Link href="/dashboard/create">
-          <Button variant={"comic"}>Create Link</Button>
-        </Link>
+        <div className="flex items-center space-x-4">
+          <Input
+            placeholder="Search here..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <Link href="/dashboard/create">
+            <Button variant={"comic"}>Create Link</Button>
+          </Link>
+        </div>
+      </div>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center space-x-4 pt-4 pb-8">
+          <p>Filter by accessibility : </p>
+          <Select
+            onValueChange={(value) => setAccessibility(value)}
+            defaultValue="all"
+          >
+            <SelectTrigger className="w-fit">
+              <SelectValue placeholder="Filter by accessibility" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="true">Public</SelectItem>
+              <SelectItem value="false">Private</SelectItem>
+            </SelectContent>
+          </Select>
+          <p>Filter by tag : </p>
+
+          <Select
+            onValueChange={(value) => setTagFilter(value)}
+            defaultValue="all"
+          >
+            <SelectTrigger className="w-fit">
+              <SelectValue placeholder="Filter by tag" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              {uniqueTags.map((tag) => (
+                <SelectItem key={tag} value={tag}>
+                  {tag}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <p>
+          {filteredLinks.length} of {links.length} links shown{" "}
+        </p>
       </div>
       {loading ? (
         <div className="space-y-4">
@@ -94,8 +173,20 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
       ) : (
         <>
           <div className="space-y-4">
-            {links.length > 0 ? (
-              links.map((link) => (
+            {links.length === 0 && (
+              <p>
+                No links found, create your{" "}
+                <Link
+                  href="/dashboard/create"
+                  className="font-bold hover:underline"
+                >
+                  first link
+                </Link>
+                .
+              </p>
+            )}
+            {filteredLinks.length > 0 ? (
+              filteredLinks.map((link) => (
                 <div
                   className="p-4 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-xl"
                   key={link.id}
@@ -191,16 +282,7 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
                 </div>
               ))
             ) : (
-              <p>
-                No links found, create your{" "}
-                <Link
-                  href="/dashboard/create"
-                  className="font-bold hover:underline"
-                >
-                  first link
-                </Link>
-                .
-              </p>
+              <p>No links found</p>
             )}
           </div>
         </>
