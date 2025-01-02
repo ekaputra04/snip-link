@@ -5,23 +5,6 @@ import { revalidateTag, unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 
-/**
- * Get all links for the logged-in user.
- * @param userId - ID of the logged-in user.
- * @returns Promise<Link[]> - List of links.
- */
-export const getLinksWithoutCache = async (userId: string): Promise<Link[]> => {
-  try {
-    return await prisma.link.findMany({
-      where: { authorId: userId },
-      orderBy: { createdAt: "desc" },
-    });
-  } catch (error) {
-    console.error("Error fetching links:", error);
-    throw new Error("Unable to fetch links");
-  }
-};
-
 export const getLinks = unstable_cache(
   async (userId: string) => {
     return await prisma.link.findMany({
@@ -69,6 +52,7 @@ export const createLink = async (
     title: string;
     originalUrl: string;
     shortUrl: string;
+    is_public: boolean;
     tags?: string[];
   }
 ): Promise<Link> => {

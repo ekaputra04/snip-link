@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { deleteLink, getLinks, getLinksWithoutCache } from "@/utils/linkUtils";
+import { deleteLink, getLinks } from "@/utils/linkUtils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,7 +41,7 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
   const getLinksData = async () => {
     try {
       setLoading(true);
-      const links = await getLinksWithoutCache(userId);
+      const links = await getLinks(userId);
       console.log("Links fetched:", links);
 
       setLoading(false);
@@ -106,9 +106,22 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
                     </div>
                     <div className="flex flex-col space-y-2 w-full">
                       <div className="flex justify-between">
-                        <h4 className="font-semibold text-xl hover:underline">
-                          {link.title}
-                        </h4>
+                        <div className="flex items-center space-x-2">
+                          <h4 className="font-semibold text-xl hover:underline">
+                            {link.title}
+                          </h4>
+                          {link.is_public ? (
+                            <>
+                              <Badge className="border-green-500 bg-green-100 hover:bg-green-200 text-black">
+                                Public
+                              </Badge>
+                            </>
+                          ) : (
+                            <Badge className="bg-red-100 hover:bg-red-200 border-red-500 text-black">
+                              Private
+                            </Badge>
+                          )}
+                        </div>
                         <div className="flex space-x-2">
                           <Button
                             className="gap-2"

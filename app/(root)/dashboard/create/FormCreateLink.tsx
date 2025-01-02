@@ -21,6 +21,13 @@ import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   title: z
@@ -29,6 +36,7 @@ const formSchema = z.object({
     .max(50, "Title must not exceed 50 characters"),
   originalUrl: z.string().url("Please enter a valid URL"),
   shortUrl: z.string().min(2, "Short URL must be at least 2 characters"),
+  is_public: z.preprocess((value) => value === "true", z.boolean()),
   tags: z.array(z.string()).optional(),
 });
 
@@ -45,6 +53,7 @@ export default function FormCreateLink({ userId }: { userId: string }) {
       title: "",
       originalUrl: "",
       shortUrl: "",
+      is_public: true,
       tags: [],
     },
   });
@@ -70,8 +79,11 @@ export default function FormCreateLink({ userId }: { userId: string }) {
         title: values.title,
         originalUrl: values.originalUrl,
         shortUrl: values.shortUrl,
+        is_public: values.is_public,
         tags: tags,
       };
+
+      console.log("Link data:", linkData);
 
       const linkAvailable = await getLinksByShortUrl(values.shortUrl);
 
@@ -132,6 +144,30 @@ export default function FormCreateLink({ userId }: { userId: string }) {
               <FormControl>
                 <Input placeholder="Input short url here..." {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="is_public"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Accessibility</FormLabel>
+              <Select
+                onValueChange={(value) => field.onChange(value === "true")}
+                defaultValue={"true"}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select accessibility" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="true">Public</SelectItem>
+                  <SelectItem value="false">Private</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
