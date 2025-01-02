@@ -6,7 +6,8 @@ export default async function RedirectPage({
 }: {
   params: { shortUrl: string };
 }) {
-  const link = await getLinksByShortUrl(params.shortUrl);
+  const shortUrl = (await params).shortUrl;
+  const link = await getLinksByShortUrl(shortUrl);
 
   if (!link) {
     notFound();

@@ -15,11 +15,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { createLink } from "@/utils/linkUtils";
+import { createLink, getLinksByShortUrl } from "@/utils/linkUtils";
 import { toast } from "sonner";
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const formSchema = z.object({
   title: z
@@ -72,15 +73,21 @@ export default function FormCreateLink({ userId }: { userId: string }) {
         tags: tags,
       };
 
-      const createdLink = await createLink(userId, linkData);
-      toast.success("Link created successfully!");
-      form.reset();
-      setTags([]);
-      router.push("/dashboard");
-    } catch (error) {
+      const linkAvailable = await getLinksByShortUrl(values.shortUrl);
+
+      if (linkAvailable) {
+        throw new Error("Short URL already exists. Please choose another one.");
+      } else {
+        const createdLink = await createLink(userId, linkData);
+        toast.success("Link created successfully!");
+        form.reset();
+        setTags([]);
+        router.push("/dashboard");
+      }
+    } catch (error: any) {
       console.error("Error creating link:", error);
 
-      setErrorMessage("Failed to create link. Please try again.");
+      setErrorMessage(error.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -159,9 +166,17 @@ export default function FormCreateLink({ userId }: { userId: string }) {
           </div>
           <FormMessage />
         </FormItem>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Submitting..." : "Submit"}
-        </Button>
+        <div className="flex gap-4">
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </Button>
+          <Link
+            href={`/dashboard`}
+            className="border-gray-500 hover:bg-gray-100 px-4 py-2 border rounded-md"
+          >
+            Cancel
+          </Link>
+        </div>
       </form>
     </Form>
   );

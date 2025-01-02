@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { LinkType } from "@/types/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface DashboardViewProps {
   links: LinkType[];
@@ -70,24 +71,28 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
 
   return (
     <>
+      <div className="flex justify-between items-center py-8 pt-8 w-full">
+        <div className="flex items-center">
+          <h1 className="font-bold text-2xl">Dashboard</h1>
+          <Button
+            className="bg-white hover:bg-white dark:hover:bg-black dark:bg-black text-black dark:text-white"
+            onClick={() => getLinksData()}
+          >
+            <RefreshCw className="w-4 h-4" />
+          </Button>
+        </div>
+        <Link href="/dashboard/create">
+          <Button variant={"comic"}>Create Link</Button>
+        </Link>
+      </div>
       {loading ? (
-        <p>Loading...</p>
+        <div className="space-y-4">
+          <Skeleton className="w-full h-52" />
+          <Skeleton className="w-full h-52" />
+          <Skeleton className="w-full h-52" />
+        </div>
       ) : (
         <>
-          <div className="flex justify-between items-center py-8 pt-8 w-full">
-            <div className="flex items-center">
-              <h1 className="font-bold text-2xl">Dashboard</h1>
-              <Button
-                className="bg-white hover:bg-white dark:hover:bg-black dark:bg-black text-black dark:text-white"
-                onClick={() => getLinksData()}
-              >
-                <RefreshCw className="w-4 h-4" />
-              </Button>
-            </div>
-            <Link href="/dashboard/create">
-              <Button variant={"comic"}>Create Link</Button>
-            </Link>
-          </div>
           <div className="space-y-4">
             {links.length > 0 ? (
               links.map((link) => (

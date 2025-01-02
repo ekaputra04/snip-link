@@ -11,6 +11,14 @@ export default async function EditPage({
   const slug = (await params).slug;
   const link = await getLinksBySlug(slug);
 
+  if (!link) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Link not found</p>
+      </div>
+    );
+  }
+
   if (link && !link.authorId) {
     throw new Error("Author ID is missing.");
   }
