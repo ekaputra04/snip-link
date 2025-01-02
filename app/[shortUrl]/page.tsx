@@ -13,5 +13,9 @@ export default async function RedirectPage({
     notFound();
   }
 
+  if (link.is_public === false) {
+    notFound();
+  }
+
   redirect(link.originalUrl);
 }

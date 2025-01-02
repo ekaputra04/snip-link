@@ -159,8 +159,8 @@ export default function FormEditLink({
             <FormItem>
               <FormLabel>Accessibility</FormLabel>
               <Select
-                onValueChange={(value) => field.onChange(value === "true")}
-                defaultValue={link.is_public ? "true" : "false"}
+                onValueChange={field.onChange}
+                defaultValue={String(link.is_public)}
               >
                 <FormControl>
                   <SelectTrigger>
