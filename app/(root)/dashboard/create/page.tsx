@@ -3,6 +3,21 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { headers } from "next/headers";
 
+/**
+ * Page for creating a new link.
+ *
+ * Checks if the user is authorized to view the page by checking the
+ * `x-user-id` header. If the user is unauthorized, it displays an
+ * "Unauthorized" message.
+ *
+ * Otherwise, it displays a form for creating a new link.
+ * The form is provided by the `FormCreateLink` component.
+ * The `userId` prop is passed to the form, which is used to associate
+ * the link with the logged-in user.
+ *
+ * The page also displays a link to the dashboard page, and a title for
+ * the page.
+ */
 export default async function CreatePage() {
   const headersList = headers();
   const userId = (await headersList).get("x-user-id");

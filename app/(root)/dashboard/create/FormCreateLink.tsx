@@ -40,6 +40,13 @@ const formSchema = z.object({
   tags: z.array(z.string()).optional(),
 });
 
+/**
+ * Form to create a new link.
+ *
+ * @param {{ userId: string }} props - userId of the logged-in user.
+ *
+ * @returns A form component to create a new link.
+ */
 export default function FormCreateLink({ userId }: { userId: string }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,6 +65,11 @@ export default function FormCreateLink({ userId }: { userId: string }) {
     },
   });
 
+  /**
+   * Handle adding a new tag when the user presses the spacebar.
+   * If the input is not empty, add it to the list of tags and clear the input.
+   * @param {React.KeyboardEvent<HTMLInputElement>} e - The event that triggered this function.
+   */
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === " " && tagInput.trim() !== "") {
       e.preventDefault();
@@ -66,10 +78,22 @@ export default function FormCreateLink({ userId }: { userId: string }) {
     }
   };
 
+  /**
+   * Remove a tag from the list of tags by its index.
+   * @param {number} index - Index of the tag to remove.
+   */
   const handleRemoveTag = (index: number) => {
     setTags((prevTags) => prevTags.filter((_, i) => i !== index));
   };
 
+  /**
+   * Submit handler for creating a new link.
+   * It validates the form data, checks the availability of the short URL, and creates the link.
+   * Displays success or error messages to the user based on the outcome.
+   *
+   * @param {z.infer<typeof formSchema>} values - The values from the form schema.
+   * @throws {Error} If the short URL already exists.
+   */
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     setErrorMessage(null);

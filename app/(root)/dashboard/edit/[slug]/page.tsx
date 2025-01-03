@@ -3,6 +3,19 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import FormEditLink from "./FormEditLink";
 
+/**
+ * The page for editing a link.
+ *
+ * This page displays a form that allows the user to edit the details of a link
+ * that they have created. The form includes fields for the link's title, short
+ * URL, original URL, and accessiblity. The page also displays a message if the
+ * user is not logged in or if the link is not found.
+ *
+ * @param {{ params: Promise<{ slug: string }> }} props - The props passed to
+ * the page. The `params` prop is a promise that resolves to an object with a
+ * `slug` property that contains the slug of the link to edit.
+ * @returns {React.ReactNode} - The React node to render for the page.
+ */
 export default async function EditPage({
   params,
 }: {

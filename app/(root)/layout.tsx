@@ -1,8 +1,17 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { BackgroundBeams } from "@/components/ui/background-beams";
-import { Spotlight } from "@/components/ui/spotlight";
 
+/**
+ * The main layout component for all pages.
+ *
+ * It renders a layout with a Navbar at the top, a Footer at the bottom, and
+ * the page content in the middle. It also renders a fixed position background
+ * of animated background beams, and a spotlight that shines on the top left
+ * corner of the screen.
+ *
+ * @param {{ children: React.ReactNode }} props The props for the component.
+ * @returns {JSX.Element} The JSX element representing the layout.
+ */
 export default async function Layout({
   children,
 }: {
@@ -12,10 +21,6 @@ export default async function Layout({
     <div className="">
       <Navbar />
       {children}
-      <div className="top-0 right-0 bottom-0 left-0 -z-50 fixed w-full h-screen">
-        <BackgroundBeams />
-      </div>
-      <Spotlight className="-top-72 -left-64 -z-40" fill="blue" />
       <Footer />
     </div>
   );

@@ -7,6 +7,22 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
+/**
+ * The sign up page.
+ *
+ * This page displays a form that allows a user to sign up to the app with
+ * their name, email, and password. The form also includes a link to sign in
+ * if the user already has an account and a link to reset their password if
+ * they have forgotten it. The page also displays a message if the user's
+ * sign up attempt fails.
+ *
+ * The page is also responsible for displaying a message if the user is
+ * redirected to the page with a message query parameter. For example, if
+ * the user is redirected to the page with the query parameter
+ * `?message=Account+created.+Check+your+email+for+a+verification+link.`,
+ * the page will display the message "Account created. Check your email for a
+ * verification link."
+ */
 export default async function Signup(props: {
   searchParams: Promise<Message>;
 }) {
@@ -26,7 +42,7 @@ export default async function Signup(props: {
           <ArrowLeft /> <span>Back</span>
         </Button>
       </Link>
-      <div className="flex justify-center items-center bg-background w-full h-[100vh]">
+      <div className="flex justify-center items-center w-full h-[100vh]">
         <div className="flex dark:border-white p-4 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-3xl">
           <form className="flex flex-col mx-auto min-w-64 max-w-64">
             <h1 className="font-medium text-2xl">Sign up</h1>

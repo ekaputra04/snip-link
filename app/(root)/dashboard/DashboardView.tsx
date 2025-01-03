@@ -43,6 +43,16 @@ interface DashboardViewProps {
 }
 const url = process.env.NEXT_PUBLIC_URL;
 
+/**
+ * @function DashboardView
+ * @description Component to display the dashboard of a user.
+ * @param {object} props - Component props.
+ * @param {LinkType[]} props.links - Array of links.
+ * @param {string} props.userId - ID of the logged-in user.
+ * @returns {JSX.Element} The JSX element to be rendered.
+ * @example
+ * <DashboardView links={links} userId={userId} />
+ */
 export default function DashboardView({ links, userId }: DashboardViewProps) {
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
@@ -52,6 +62,11 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
 
   const uniqueTags = Array.from(new Set(links.flatMap((link) => link.tags)));
 
+  /**
+   * Fetches the links for the logged-in user and updates the state with the
+   * retrieved links. Displays a loading indicator while fetching data and logs
+   * any errors encountered during the fetch operation.
+   */
   const getLinksData = async () => {
     try {
       setLoading(true);
@@ -64,6 +79,12 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
     }
   };
 
+  /**
+   * Copies the short URL of a link to the clipboard.
+   * @param {string} shortUrl - Short URL of the link to copy.
+   * @example
+   * handleCopyClick("some-short-url");
+   */
   const handleCopyClick = async (shortUrl: string) => {
     try {
       await navigator.clipboard.writeText(url + shortUrl);
@@ -73,6 +94,14 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
     }
   };
 
+  /**
+   * Deletes a link with the given ID for the logged-in user.
+   * Displays a success message on successful deletion and logs any errors
+   * encountered during the deletion operation.
+   * @param {number} id - ID of the link to delete.
+   * @example
+   * handleDeleteLink(123);
+   */
   const handleDeleteLink = async (id: number) => {
     try {
       const deletedLink = await deleteLink(id);
