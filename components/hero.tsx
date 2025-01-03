@@ -65,8 +65,8 @@ export default function Header() {
         </div>
       </div>
       <div className="flex flex-col justify-start space-y-4 bg-white dark:bg-primary p-8 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-3xl">
-        <div className="flex w-full">
-          <div className="w-1/2">
+        <div className="flex md:flex-row flex-col w-full">
+          <div className="md:w-1/2">
             <h1 className="pb-8 font-bold text-2xl lg:text-4xl">
               Simple, fast, and easy to remember
             </h1>
@@ -81,7 +81,7 @@ export default function Header() {
               </p>
             </div>
           </div>
-          <div className="p-4 w-1/2">
+          <div className="p-8 md:p-4 md:w-1/2">
             <img src={currentImages} alt="Image" />
           </div>
         </div>
