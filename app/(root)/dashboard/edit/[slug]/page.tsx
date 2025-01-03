@@ -34,7 +34,7 @@ export default async function EditPage({
       </div>
       {link ? (
         <>
-          <div className="p-8 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-3xl">
+          <div className="dark:border-white p-8 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-3xl">
             <FormEditLink link={{ ...link, authorId: link.authorId || "" }} />
           </div>
         </>

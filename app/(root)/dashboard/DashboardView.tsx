@@ -169,6 +169,7 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
           {filteredLinks.length} of {links.length} links shown{" "}
         </p>
       </div>
+
       {loading ? (
         <div className="space-y-4">
           <Skeleton className="w-full h-52" />
@@ -193,7 +194,7 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
             {filteredLinks.length > 0 ? (
               filteredLinks.map((link) => (
                 <div
-                  className="p-4 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-xl"
+                  className="dark:border-white p-4 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-xl"
                   key={link.id}
                 >
                   <div className="flex items-start gap-4">
@@ -227,17 +228,17 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
                           </Button>
                           <Link
                             href={`/dashboard/edit/${link.slug}`}
-                            className="md:block hidden"
+                            className="md:block hidden dark:text-black"
                           >
                             <Button
-                              className="border-green-500 bg-green-100 hover:bg-green-200"
+                              className="border-green-500 bg-green-100 hover:bg-green-200 text-black"
                               variant={"outline"}
                             >
-                              <Pencil className="w-4 h-4" />
+                              <Pencil className="w-4 h-4 text-black" />
                             </Button>
                           </Link>
                           <AlertDialog>
-                            <AlertDialogTrigger className="md:block hidden bg-red-100 hover:bg-red-200 px-4 py-2 border border-red-500 rounded-md">
+                            <AlertDialogTrigger className="md:block hidden bg-red-100 hover:bg-red-200 px-4 py-2 border border-red-500 rounded-md text-black">
                               <Trash className="w-4 h-4" />
                             </AlertDialogTrigger>
                             <AlertDialogContent>
@@ -294,7 +295,7 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
                             className="border-green-500 bg-green-100 hover:bg-green-200"
                             variant={"outline"}
                           >
-                            <Pencil className="w-4 h-4" />
+                            <Pencil className="w-4 h-4 text-black" />
                           </Button>
                         </Link>
                         <AlertDialog>

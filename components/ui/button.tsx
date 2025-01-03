@@ -19,7 +19,7 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         comic:
-          "will-change-transform relative flex gap-2 px-4 py-2 border-t-2 border-r-8 hover:border-r-2 border-b-8 border-black hover:border-b-2 border-l-2 rounded-3xl hover:translate-x-1 hover:translate-y-1",
+          "will-change-transform relative dark:text-white dark:border-white flex gap-2 px-4 py-2 border-t-2 border-r-8 hover:border-r-2 border-b-8 border-black hover:border-b-2 border-l-2 rounded-3xl hover:translate-x-1 hover:translate-y-1",
       },
       size: {
         default: "px-4 py-2",

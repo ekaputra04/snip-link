@@ -64,7 +64,7 @@ export default function Header() {
           <TypewriterEffectSmooth words={currentWords} className="text-xs" />
         </div>
       </div>
-      <div className="flex flex-col justify-start space-y-4 bg-white dark:bg-primary p-8 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-3xl">
+      <div className="flex flex-col justify-start space-y-4 dark:border-white p-8 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-3xl">
         <div className="flex md:flex-row flex-col w-full">
           <div className="md:w-1/2">
             <h1 className="pb-8 font-bold text-2xl lg:text-4xl">

@@ -208,7 +208,7 @@ export default function FormCreateLink({ userId }: { userId: string }) {
           </Button>
           <Link
             href={`/dashboard`}
-            className="border-gray-500 hover:bg-gray-100 px-4 py-2 border rounded-md"
+            className="border-gray-500 dark:hover:bg-black/90 px-4 py-2 border rounded-md"
           >
             Cancel
           </Link>

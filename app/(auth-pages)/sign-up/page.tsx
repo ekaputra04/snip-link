@@ -27,7 +27,7 @@ export default async function Signup(props: {
         </Button>
       </Link>
       <div className="flex justify-center items-center bg-background w-full h-[100vh]">
-        <div className="flex p-4 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-3xl">
+        <div className="flex dark:border-white p-4 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-3xl">
           <form className="flex flex-col mx-auto min-w-64 max-w-64">
             <h1 className="font-medium text-2xl">Sign up</h1>
             <p className="text-foreground text-sm text">
