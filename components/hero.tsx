@@ -1,44 +1,99 @@
-import NextLogo from "./next-logo";
-import SupabaseLogo from "./supabase-logo";
+"use client";
+
+import Link from "next/link";
+import {
+  TypewriterEffect,
+  TypewriterEffectSmooth,
+} from "./ui/typewriter-effect";
+import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+
+const sentences = [
+  [
+    { text: "Your", className: "" },
+    { text: "Name!", className: "text-blue-500 dark:text-blue-500" },
+  ],
+  [
+    { text: "Create", className: "" },
+    { text: "Timed", className: "" },
+    { text: "Links!", className: "text-blue-500 dark:text-blue-500" },
+  ],
+  [
+    { text: "Protect", className: "" },
+    { text: "Your", className: "" },
+    { text: "Links!", className: "text-blue-500 dark:text-blue-500" },
+  ],
+];
+
+const images = [
+  "/images/dashboard.png",
+  "/images/create.png",
+  "/images/edit.png",
+];
 
 export default function Header() {
+  const [currentWords, setCurrentWords] = useState(sentences[0]);
+  const [currentImages, setCurrentImages] = useState(images[0]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => {
+        const nextIndex = (prevIndex + 1) % sentences.length;
+        setCurrentWords(sentences[nextIndex]);
+        setCurrentImages(images[nextIndex]);
+        return nextIndex;
+      });
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="flex flex-col gap-16 items-center">
-      <div className="flex gap-8 justify-center items-center">
-        <a
-          href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <SupabaseLogo />
-        </a>
-        <span className="border-l rotate-45 h-6" />
-        <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
-          <NextLogo />
-        </a>
+    <>
+      <div className="mx-auto">
+        <h1 className="pb-8 font-bold text-2xl lg:text-4xl">
+          Create and Manage Your Links
+        </h1>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="block text-lg">
+            The best and shortest link shortener for
+          </p>
+
+          <TypewriterEffectSmooth words={currentWords} className="text-xs" />
+        </div>
       </div>
-      <h1 className="sr-only">Supabase and Next.js Starter Template</h1>
-      <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
-        The fastest way to build apps with{" "}
-        <a
-          href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-          target="_blank"
-          className="font-bold hover:underline"
-          rel="noreferrer"
-        >
-          Supabase
-        </a>{" "}
-        and{" "}
-        <a
-          href="https://nextjs.org/"
-          target="_blank"
-          className="font-bold hover:underline"
-          rel="noreferrer"
-        >
-          Next.js
-        </a>
-      </p>
-      <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
-    </div>
+      <div className="flex flex-col justify-start space-y-4 bg-white dark:bg-primary p-8 border-t-2 border-r-8 border-b-8 border-black border-l-2 rounded-3xl">
+        <div className="flex w-full">
+          <div className="w-1/2">
+            <h1 className="pb-8 font-bold text-2xl lg:text-4xl">
+              Simple, fast, and easy to remember
+            </h1>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="block text-lg">
+                Experience ultimate convenience with our URL shortening service,
+                designed to encapsulate the essence of{" "}
+                <span className="border-b-2 border-blue-500">
+                  simplicity, speed, and memorability.
+                </span>
+              </p>
+            </div>
+          </div>
+          <div className="p-4 w-1/2">
+            <img src={currentImages} alt="Image" />
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col mx-auto">
+        <h1 className="pb-8 font-bold text-xl lg:text-2xl">
+          So, what are you waiting for
+        </h1>
+        <Link href={"/dashboard"} className="mx-auto">
+          <Button variant={"comic"}>Go to Dashboard</Button>
+        </Link>
+      </div>
+    </>
   );
 }

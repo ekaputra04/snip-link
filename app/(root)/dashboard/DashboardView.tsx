@@ -104,7 +104,7 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
 
   return (
     <>
-      <div className="flex justify-between items-center pt-8 pb-4 w-full">
+      <div className="flex flex-wrap justify-between items-center space-y-4 pt-8 pb-4 w-full">
         <div className="flex items-center">
           <h1 className="font-bold text-2xl">Dashboard</h1>
           <Button
@@ -125,40 +125,45 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
           </Link>
         </div>
       </div>
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-4 pt-4 pb-8">
-          <p>Filter by accessibility : </p>
-          <Select
-            onValueChange={(value) => setAccessibility(value)}
-            defaultValue="all"
-          >
-            <SelectTrigger className="w-fit">
-              <SelectValue placeholder="Filter by accessibility" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="true">Public</SelectItem>
-              <SelectItem value="false">Private</SelectItem>
-            </SelectContent>
-          </Select>
-          <p>Filter by tag : </p>
+      <div className="flex flex-wrap justify-between items-center pb-8 md:pb-0">
+        <div className="flex md:flex-row flex-col justify-start md:items-center gap-4 pt-4 pb-8">
+          <div className="flex justify-start items-center space-x-4">
+            <p>Filter by accessibility : </p>
+            <Select
+              onValueChange={(value) => setAccessibility(value)}
+              defaultValue="all"
+            >
+              <SelectTrigger className="w-fit">
+                <SelectValue placeholder="Filter by accessibility" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="true">Public</SelectItem>
+                <SelectItem value="false">Private</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-          <Select
-            onValueChange={(value) => setTagFilter(value)}
-            defaultValue="all"
-          >
-            <SelectTrigger className="w-fit">
-              <SelectValue placeholder="Filter by tag" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              {uniqueTags.map((tag) => (
-                <SelectItem key={tag} value={tag}>
-                  {tag}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex justify-start items-center gap-4">
+            <p>Filter by tag : </p>
+
+            <Select
+              onValueChange={(value) => setTagFilter(value)}
+              defaultValue="all"
+            >
+              <SelectTrigger className="w-fit">
+                <SelectValue placeholder="Filter by tag" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                {uniqueTags.map((tag) => (
+                  <SelectItem key={tag} value={tag}>
+                    {tag}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <p>
           {filteredLinks.length} of {links.length} links shown{" "}
@@ -192,11 +197,11 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
                   key={link.id}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="w-fit">
+                    <div className="md:block hidden w-fit">
                       <Globe size={32} />
                     </div>
                     <div className="flex flex-col space-y-2 w-full">
-                      <div className="flex justify-between">
+                      <div className="flex justify-between md:items-center md:space-x-4">
                         <div className="flex items-center space-x-2">
                           <h4 className="font-semibold text-xl hover:underline">
                             {link.title}
@@ -220,7 +225,10 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
                           >
                             <Copy className="w-4 h-4" /> <span>Copy</span>
                           </Button>
-                          <Link href={`/dashboard/edit/${link.slug}`}>
+                          <Link
+                            href={`/dashboard/edit/${link.slug}`}
+                            className="md:block hidden"
+                          >
                             <Button
                               className="border-green-500 bg-green-100 hover:bg-green-200"
                               variant={"outline"}
@@ -229,7 +237,7 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
                             </Button>
                           </Link>
                           <AlertDialog>
-                            <AlertDialogTrigger className="bg-red-100 hover:bg-red-200 px-4 py-2 border border-red-500 rounded-md">
+                            <AlertDialogTrigger className="md:block hidden bg-red-100 hover:bg-red-200 px-4 py-2 border border-red-500 rounded-md">
                               <Trash className="w-4 h-4" />
                             </AlertDialogTrigger>
                             <AlertDialogContent>
@@ -256,14 +264,17 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
                       </div>
                       <Link
                         href={url + link.shortUrl}
-                        className="text-blue-500 hover:underline"
+                        className="flex-wrap text-blue-500 hover:underline"
                       >
                         {url + link.shortUrl}
                       </Link>
-                      <Link href={link.originalUrl} className="hover:underline">
+                      <Link
+                        href={link.originalUrl}
+                        className="hover:underline break-words"
+                      >
                         {link.originalUrl}
                       </Link>
-                      <div className="flex space-x-4 pt-4">
+                      <div className="flex md:flex-row flex-col md:space-x-4 space-y-2 pt-4">
                         <div className="flex items-center space-x-1">
                           <Calendar className="w-4 h-4" />
                           <p>{new Date(link.updatedAt).toLocaleString()}</p>
@@ -276,6 +287,40 @@ export default function DashboardView({ links, userId }: DashboardViewProps) {
                             ))}
                           </div>
                         )}
+                      </div>
+                      <div className="flex justify-end gap-2 md:hidden w-full">
+                        <Link href={`/dashboard/edit/${link.slug}`}>
+                          <Button
+                            className="border-green-500 bg-green-100 hover:bg-green-200"
+                            variant={"outline"}
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                        </Link>
+                        <AlertDialog>
+                          <AlertDialogTrigger className="bg-red-100 hover:bg-red-200 px-4 py-2 border border-red-500 rounded-md">
+                            <Trash className="w-4 h-4" />
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you sure to delete {link.title}?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will
+                                permanently delete this link from our servers.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteLink(link.id)}
+                              >
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </div>
                   </div>

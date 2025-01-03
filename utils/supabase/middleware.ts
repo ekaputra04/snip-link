@@ -32,18 +32,22 @@ export const updateSession = async (request: NextRequest) => {
 
     const pathname = request.nextUrl.pathname;
 
+    if (!user) {
+      if (pathname === "/" || pathname.startsWith("/public")) {
+        return response;
+      }
+
+      if (pathname.startsWith("/dashboard")) {
+        return NextResponse.redirect(new URL("/sign-in", request.url));
+      }
+    }
+
     if (user) {
       if (pathname === "/sign-in" || pathname === "/sign-up") {
         return NextResponse.redirect(new URL("/", request.url));
       }
-      return response;
-    }
 
-    if (!user) {
-      if (pathname.startsWith("/dashboard")) {
-        return NextResponse.redirect(new URL("/sign-in", request.url));
-      }
-      return response;
+      response.headers.set("x-user-id", user.id);
     }
 
     return response;
