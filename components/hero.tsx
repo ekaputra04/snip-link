@@ -44,7 +44,7 @@ export default function Header() {
         setCurrentImages(images[nextIndex]);
         return nextIndex;
       });
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, []);
@@ -81,7 +81,7 @@ export default function Header() {
               </p>
             </div>
           </div>
-          <div className="p-8 md:p-4 md:w-1/2">
+          <div className="md:p-4 pt-12 md:w-1/2">
             <img src={currentImages} alt="Image" />
           </div>
         </div>
